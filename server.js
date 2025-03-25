@@ -25,17 +25,15 @@ function broadcast(data, sender) {
 }
 
 app.get('/ws', (req, res) => {
-    res.send("This endpoint is for WebSocket connections only.");
-  });
-  
+  res.send("This endpoint is for WebSocket connections only.");
+});
 
 // Handle WebSocket connections
 wss.on('connection', (ws, req) => {
   console.log(`Client connected from ${req.socket.remoteAddress}`);
 
   ws.on('message', (data, isBinary) => {
-    // Expect binary JPEG data from the ESP32‑CAM.
-    // Broadcast the received frame to all connected clients.
+    // Broadcast incoming binary data (JPEG frame) to all connected clients.
     broadcast(data, ws);
   });
 
