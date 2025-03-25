@@ -6,16 +6,16 @@ const { WebSocketServer } = require('ws');
 
 const app = express();
 
-// Serve static files from the "public" folder (optional)
+// Serve static files from "public" (if needed)
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Create an HTTP server
 const server = http.createServer(app);
 
-// Create a WebSocket server on the '/ws' path
+// Create a WebSocket server on "/ws"
 const wss = new WebSocketServer({ server, path: '/ws' });
 
-// Broadcast a binary message to all connected clients except the sender
+// Broadcast binary data to all clients except sender
 function broadcast(data, sender) {
   wss.clients.forEach((client) => {
     if (client !== sender && client.readyState === client.OPEN) {
@@ -24,6 +24,7 @@ function broadcast(data, sender) {
   });
 }
 
+// Optional HTTP GET on /ws for debugging
 app.get('/ws', (req, res) => {
   res.send("This endpoint is for WebSocket connections only.");
 });
@@ -33,7 +34,7 @@ wss.on('connection', (ws, req) => {
   console.log(`Client connected from ${req.socket.remoteAddress}`);
 
   ws.on('message', (data, isBinary) => {
-    // Broadcast incoming binary data (JPEG frame) to all connected clients.
+    // Broadcast received data to all clients
     broadcast(data, ws);
   });
 
@@ -42,7 +43,7 @@ wss.on('connection', (ws, req) => {
   });
 
   ws.on('error', (error) => {
-    console.error('WebSocket error:', error);
+    console.error('WS error:', error);
   });
 });
 
